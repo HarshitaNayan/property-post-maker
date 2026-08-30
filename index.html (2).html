@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Post Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#152229;
+    --navy-2:#1E323C;
+    --gold:#C6A15B;
+    --gold-soft:#E4C98A;
+    --cream:#FBF7EF;
+    --paper:#FFFFFF;
+    --ink:#1C2226;
+    --muted:#6E7680;
+    --line: rgba(198,161,91,0.4);
+    --bg-1:#EFEAE1;
+    --bg-2:#DCE3E2;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Manrope', sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, #f4f0e8 0%, transparent 45%),
+      radial-gradient(circle at 85% 90%, #e2ece9 0%, transparent 50%),
+      linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    color:var(--ink);
+    padding:40px 20px 60px;
+  }
+
+  .app-header{
+    max-width:1160px;
+    margin:0 auto 34px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+
+  .brandmark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brandmark .icon{
+    width:42px;height:42px;
+    border-radius:11px;
+    background:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 16px rgba(21,34,41,0.25);
+  }
+  .brandmark h1{
+    font-family:'Playfair Display', serif;
+    font-size:1.5rem;
+    margin:0;
+    letter-spacing:0.2px;
+  }
+  .brandmark .tag{
+    display:block;
+    font-family:'Manrope',sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:700;
+    margin-top:2px;
+  }
+
+  .credit{
+    font-size:0.8rem;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .credit b{color:var(--ink);}
+
+  .layout{
+    max-width:1160px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:400px 1fr;
+    gap:34px;
+    align-items:start;
+  }
+
+  @media (max-width: 900px){
+    .layout{grid-template-columns:1fr;}
+  }
+
+  /* ---------- FORM PANEL ---------- */
+  .panel{
+    background:var(--paper);
+    border-radius:20px;
+    padding:28px 26px 30px;
+    box-shadow:0 20px 45px rgba(21,34,41,0.10), 0 3px 10px rgba(21,34,41,0.06);
+  }
+  .panel h2{
+    font-family:'Playfair Display', serif;
+    font-size:1.3rem;
+    margin:0 0 4px;
+  }
+  .panel .sub{
+    font-size:0.85rem;
+    color:var(--muted);
+    margin:0 0 22px;
+  }
+
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block;
+    font-size:0.78rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    color:var(--navy);
+    margin-bottom:7px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    border:1.5px solid #E4E1D8;
+    background:#FCFBF8;
+    border-radius:11px;
+    padding:12px 13px;
+    font-size:0.92rem;
+    font-family:inherit;
+    color:var(--ink);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .field input:focus, .field textarea:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(198,161,91,0.18);
+  }
+  .field .hint{
+    font-size:0.72rem;
+    color:#9AA0A6;
+    margin-top:5px;
+  }
+
+  .btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:14px 16px;
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:0.95rem;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, opacity .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+
+  .btn-primary{
+    background:linear-gradient(135deg, var(--navy), var(--navy-2));
+    color:var(--gold-soft);
+    box-shadow:0 12px 24px rgba(21,34,41,0.28);
+    margin-top:6px;
+  }
+  .btn-primary:hover{box-shadow:0 14px 28px rgba(21,34,41,0.34);}
+
+  .btn-gold{
+    background:var(--gold);
+    color:var(--navy);
+    margin-top:14px;
+    box-shadow:0 10px 20px rgba(198,161,91,0.35);
+  }
+  .btn-gold:hover{background:var(--gold-soft);}
+  .btn-gold:disabled{
+    opacity:0.45;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+
+  /* ---------- PREVIEW SIDE ---------- */
+  .preview-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+
+  .stage{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    padding:10px 0;
+  }
+
+  .card{
+    width:420px;
+    max-width:100%;
+    background:var(--cream);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 35px 70px rgba(21,34,41,0.22), 0 10px 24px rgba(21,34,41,0.14);
+    position:relative;
+    font-family:'Manrope', sans-serif;
+    opacity:0;
+    transform:translateY(14px) scale(0.985);
+    transition:opacity .45s ease, transform .45s ease;
+  }
+  .card.show{opacity:1; transform:translateY(0) scale(1);}
+
+  .card .corner{
+    position:absolute;
+    width:26px;height:26px;
+    border-color:var(--gold);
+    z-index:3;
+    opacity:0.9;
+  }
+  .card .corner.tl{top:74px;left:16px;border-top:2px solid var(--gold);border-left:2px solid var(--gold);}
+  .card .corner.br{bottom:96px;right:16px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);}
+
+  .card-strip{
+    background:linear-gradient(120deg, var(--navy), var(--navy-2));
+    padding:16px 22px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .card-strip .house-ico{
+    width:30px;height:30px;
+    border-radius:8px;
+    background:rgba(198,161,91,0.16);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .card-strip .brand-text{
+    color:#F2ECDD;
+    font-weight:800;
+    font-size:0.82rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+  }
+  .card-strip .brand-sub{
+    color:var(--gold-soft);
+    font-size:0.62rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-weight:700;
+    margin-top:1px;
+  }
+
+  .card-body{
+    padding:30px 26px 20px;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-size:0.68rem;
+    font-weight:800;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--navy);
+    background:rgba(198,161,91,0.22);
+    padding:5px 11px;
+    border-radius:100px;
+    margin-bottom:16px;
+  }
+
+  .prop-title{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:1.55rem;
+    line-height:1.25;
+    color:var(--navy);
+    margin:0 0 10px;
+    word-wrap:break-word;
+  }
+
+  .prop-location{
+    display:flex;
+    align-items:flex-start;
+    gap:7px;
+    font-size:0.9rem;
+    color:var(--muted);
+    font-weight:600;
+    margin-bottom:20px;
+  }
+  .prop-location svg{flex-shrink:0;margin-top:2px;}
+
+  .price-plate{
+    display:inline-flex;
+    align-items:baseline;
+    gap:8px;
+    border:1.5px solid var(--line);
+    background:rgba(198,161,91,0.08);
+    border-radius:12px;
+    padding:10px 16px;
+    margin-bottom:22px;
+  }
+  .price-plate .label{
+    font-size:0.62rem;
+    font-weight:800;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .price-plate .value{
+    font-family:'Playfair Display', serif;
+    font-size:1.32rem;
+    font-weight:700;
+    color:var(--navy);
+  }
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, var(--line), transparent 85%);
+    margin:0 0 18px;
+  }
+
+  .highlights{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:6px;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#F4EFE3;
+    border:1px solid #EADFC4;
+    color:var(--navy);
+    font-size:0.78rem;
+    font-weight:700;
+    padding:7px 11px 7px 8px;
+    border-radius:9px;
+  }
+  .chip svg{flex-shrink:0;}
+
+  .credit-line{
+    text-align:center;
+    font-size:0.64rem;
+    color:#B9B2A0;
+    font-weight:600;
+    letter-spacing:0.03em;
+    padding:14px 0 4px;
+  }
+
+  .contact-bar{
+    background:linear-gradient(120deg, var(--navy-2), var(--navy));
+    padding:15px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .contact-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#EDE7D8;
+    font-size:0.78rem;
+    font-weight:700;
+  }
+
+  .empty-state{
+    width:420px;
+    max-width:100%;
+    border:1.5px dashed #C9C2AE;
+    border-radius:22px;
+    padding:60px 30px;
+    text-align:center;
+    color:var(--muted);
+    background:rgba(255,255,255,0.4);
+  }
+  .empty-state .ico{
+    width:52px;height:52px;
+    margin:0 auto 14px;
+    border-radius:14px;
+    background:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .empty-state h3{
+    font-family:'Playfair Display', serif;
+    color:var(--navy);
+    margin:0 0 6px;
+    font-size:1.1rem;
+  }
+  .empty-state p{margin:0;font-size:0.85rem;line-height:1.5;}
+
+  @media (max-width:480px){
+    .card{width:100%;}
+    .empty-state{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="brandmark">
+    <div class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M3 11L12 4L21 11" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 10V19.5C5 20.0523 5.44772 20.5 6 20.5H9.5V15C9.5 14.4477 9.94772 14 10.5 14H13.5C14.0523 14 14.5 14.4477 14.5 15V20.5H18C18.5523 20.5 19 20.0523 19 19.5V10" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Property Post Maker</h1>
+      <span class="tag">Listing creatives, ready to share</span>
+    </div>
+  </div>
+  <div class="credit">Made by <b>Harshita</b></div>
+</div>
+
+<div class="layout">
+
+  <!-- FORM PANEL -->
+  <div class="panel">
+    <h2>Listing details</h2>
+    <p class="sub">Fill this in once — the post designs itself.</p>
+
+    <div class="field">
+      <label for="propType">Property &amp; Type</label>
+      <input id="propType" type="text" placeholder="4 BHK Luxury Villa, Ansal Golf City">
+    </div>
+
+    <div class="field">
+      <label for="location">Location</label>
+      <input id="location" type="text" placeholder="Sushant Golf City, Lucknow">
+    </div>
+
+    <div class="field">
+      <label for="price">Price</label>
+      <input id="price" type="text" placeholder="₹2.5 Cr onwards">
+    </div>
+
+    <div class="field">
+      <label for="highlights">Highlights</label>
+      <textarea id="highlights" rows="2" placeholder="3000 sq.ft · Corner plot · Ready to move"></textarea>
+      <div class="hint">Separate points with a dot ( · ) or comma.</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="generatePost()">Generate Post</button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-wrap">
+    <div class="stage">
+
+      <div id="emptyState" class="empty-state">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 11L12 4L21 11" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 10V19.5C5 20.0523 5.44772 20.5 6 20.5H9.5V15C9.5 14.4477 9.94772 14 10.5 14H13.5C14.0523 14 14.5 14.4477 14.5 15V20.5H18C18.5523 20.5 19 20.0523 19 19.5V10" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Your post will appear here</h3>
+        <p>Fill in the listing details and click<br><strong>Generate Post</strong> to build a shareable creative.</p>
+      </div>
+
+      <div class="card" id="card">
+        <div class="corner tl"></div>
+        <div class="corner br"></div>
+
+        <div class="card-strip">
+          <div class="house-ico">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M3 11L12 4L21 11" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 10V19.5C5 20.0523 5.44772 20.5 6 20.5H9.5V15C9.5 14.4477 9.94772 14 10.5 14H13.5C14.0523 14 14.5 14.4477 14.5 15V20.5H18C18.5523 20.5 19 20.0523 19 19.5V10" stroke="#C6A15B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-text">Property Post Maker</div>
+            <div class="brand-sub">Verified Listing</div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <span class="eyebrow">New Listing</span>
+          <h3 class="prop-title" id="outTitle">4 BHK Luxury Villa, Ansal Golf City</h3>
+
+          <div class="prop-location">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-7.58 7-12.5A7 7 0 0 0 5 9.5C5 14.42 12 22 12 22Z" stroke="#6E7680" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.4" stroke="#6E7680" stroke-width="1.8"/></svg>
+            <span id="outLocation">Sushant Golf City, Lucknow</span>
+          </div>
+
+          <div class="price-plate">
+            <span class="label">Price</span>
+            <span class="value" id="outPrice">₹2.5 Cr onwards</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="highlights" id="outHighlights"></div>
+        </div>
+
+        <div class="credit-line">Made by Harshita · Property Post Maker</div>
+
+        <div class="contact-bar">
+          <div class="contact-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.79.63 2.65a2 2 0 0 1-.45 2.11L8.09 9.68a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.11-.45c.86.3 1.75.51 2.65.63A2 2 0 0 1 22 16.92Z" stroke="#EDE7D8" stroke-width="1.8"/></svg>
+            <span>9876543210</span>
+          </div>
+          <div class="contact-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="#EDE7D8" stroke-width="1.8" stroke-linejoin="round"/><path d="m4 6 8 7 8-7" stroke="#EDE7D8" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span>example@email.com</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="btn btn-gold" id="downloadBtn" style="max-width:420px;" onclick="downloadPost()" disabled>Download as Image</button>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+  const checkIco = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#C6A15B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function generatePost(){
+    const title = document.getElementById('propType').value.trim() || "4 BHK Luxury Villa, Ansal Golf City";
+    const location = document.getElementById('location').value.trim() || "Sushant Golf City, Lucknow";
+    const price = document.getElementById('price').value.trim() || "₹2.5 Cr onwards";
+    const highlightsRaw = document.getElementById('highlights').value.trim() || "3000 sq.ft · Corner plot · Ready to move";
+
+    document.getElementById('outTitle').textContent = title;
+    document.getElementById('outLocation').textContent = location;
+    document.getElementById('outPrice').textContent = price;
+
+    const parts = highlightsRaw.split(/·|\||,/).map(s => s.trim()).filter(Boolean);
+    const chipContainer = document.getElementById('outHighlights');
+    chipContainer.innerHTML = '';
+    parts.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = checkIco + '<span>' + escapeHtml(p) + '</span>';
+      chipContainer.appendChild(chip);
+    });
+
+    document.getElementById('emptyState').style.display = 'none';
+    const card = document.getElementById('card');
+    card.style.display = 'block';
+    requestAnimationFrame(() => card.classList.add('show'));
+
+    document.getElementById('downloadBtn').disabled = false;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function downloadPost(){
+    const card = document.getElementById('card');
+    const btn = document.getElementById('downloadBtn');
+    const originalLabel = btn.textContent;
+    btn.textContent = 'Preparing image…';
+    btn.disabled = true;
+
+    html2canvas(card, {
+      scale: 3,
+      backgroundColor: '#FBF7EF',
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      const titleSlug = (document.getElementById('outTitle').textContent || 'property-post')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      link.download = (titleSlug || 'property-post') + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+    }).catch(() => {
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+      alert('Could not generate the image. Please try again.');
+    });
+  }
+</script>
+
+</body>
+</html>
